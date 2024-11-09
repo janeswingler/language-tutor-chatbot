@@ -30,7 +30,7 @@ const Register = () => {
         const data = await response.json();
         if (response.status === 200) {
             setMessage(data.message);
-            navigate('/'); // Redirect to home page upon successful registration
+            navigate('/');
         } else {
             setMessage(data.message);
         }

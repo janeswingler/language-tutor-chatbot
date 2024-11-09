@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 import './Conversation.css';
+import {useNavigate} from "react-router-dom";
 
 
 
@@ -19,6 +20,8 @@ const Conversation = () => {
     const [isRecording, setIsRecording] = useState(false);
     const [isBlurred, setIsBlurred] = useState(false);
     const { transcript, resetTranscript } = useSpeechRecognition();
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         const userId = localStorage.getItem('userId');
@@ -99,6 +102,7 @@ const Conversation = () => {
 
                 setNewMessage('');
                 setLoading(false);
+                navigate('/flashcards');
             } else {
                 setMessage('Failed to end conversation');
             }
@@ -329,7 +333,7 @@ const Conversation = () => {
                         placeholder="Type your message"
                         disabled={loading}
                     />
-                    <button onClick={handleSendMessage} disabled={loading}>
+                    <button onClick={() => handleSendMessage()} disabled={loading}>
                         {loading ? 'Sending...' : 'Send Message'}
                     </button>
                     <button

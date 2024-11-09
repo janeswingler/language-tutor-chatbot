@@ -26,7 +26,7 @@ const Login = () => {
             setToken(data.token);
             localStorage.setItem('token', data.token);
             localStorage.setItem('userId', data.userId);
-            navigate('/'); // Redirect to home page upon successful login
+            navigate('/flashcards'); // Redirect to home page upon successful login
         } else {
             setMessage(data.message);
         }
