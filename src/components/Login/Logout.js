@@ -1,16 +1,15 @@
-// src/components/Login/Logout.js
-
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const Logout = () => {
+const Logout = ({ onLogout }) => {
     const navigate = useNavigate();
 
     useEffect(() => {
         localStorage.removeItem('token');
-        localStorage.removeItem('userId');
+        localStorage.removeItem('userId'); // Remove userId
+        onLogout(); // Update token state in App.js
         navigate('/login');
-    }, [navigate]);
+    }, [onLogout, navigate]);
 
     return null;
 };

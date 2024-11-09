@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import FlashcardComponent from './FlashcardComponent';
 import './FlashcardsPage.css';
 
-const FlashcardsPage = () => {
+const FlashcardsPage = ({ token, userId }) => {
     const [flashcardPacks, setFlashcardPacks] = useState([]);
     const [selectedPackId, setSelectedPackId] = useState(null);
     const [flashcards, setFlashcards] = useState([]);

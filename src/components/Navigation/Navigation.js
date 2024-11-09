@@ -1,18 +1,15 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import './Navigation.css';
 
-const Navigation = () => {
-    const token = localStorage.getItem('token');
-
+const Navigation = ({ token }) => {
     return (
         <nav className="navbar">
             <ul>
                 <li>
                     <Link to="/">Home</Link>
                 </li>
-                {!token && (
+                {!token ? (
                     <>
                         <li>
                             <Link to="/login">Login</Link>
@@ -21,8 +18,7 @@ const Navigation = () => {
                             <Link to="/register">Register</Link>
                         </li>
                     </>
-                )}
-                {token && (
+                ) : (
                     <>
                         <li>
                             <Link to="/conversations">Conversations</Link>

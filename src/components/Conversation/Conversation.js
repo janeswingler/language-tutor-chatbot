@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 import './Conversation.css';
-import {useNavigate} from "react-router-dom";
-
-
+import { useNavigate } from 'react-router-dom';
 
 const Conversation = () => {
     const [conversations, setConversations] = useState([]);
@@ -41,7 +39,6 @@ const Conversation = () => {
     const toggleBlur = () => {
         setIsBlurred(!isBlurred);
     };
-
 
     const startNewConversation = async () => {
         const token = localStorage.getItem('token');
@@ -99,7 +96,6 @@ const Conversation = () => {
             const data = await response.json();
             if (response.ok) {
                 setMessage('Conversation ended. Recommended words: ' + data.recommendedWords.join(', '));
-
                 setNewMessage('');
                 setLoading(false);
                 navigate('/flashcards');
@@ -146,6 +142,40 @@ const Conversation = () => {
         }
     };
 
+    const updateProficiencyLevel = async (newLevel) => {
+        const token = localStorage.getItem('token');
+        const userId = localStorage.getItem('userId');
+
+        if (!userId) {
+            setMessage('User ID is not available. Please log in again.');
+            return;
+        }
+
+        try {
+            const response = await fetch(`http://localhost:8080/api/users/${userId}/proficiency`, {
+                method: 'PATCH',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ proficiencyLevel: newLevel }),  // Correct format
+            });
+
+            if (response.ok) {
+                setUserDetails((prevDetails) => ({
+                    ...prevDetails,
+                    proficiencyLevel: newLevel,
+                }));
+                setMessage("Proficiency level updated successfully");
+            } else {
+                const data = await response.json();
+                setMessage(data.message || "Failed to update proficiency level");
+            }
+        } catch (error) {
+            console.error('Error updating proficiency level:', error);
+            setMessage('Error updating proficiency level');
+        }
+    };
 
     const fetchChatHistory = async (conversationId) => {
         const token = localStorage.getItem('token');
@@ -186,7 +216,6 @@ const Conversation = () => {
         setIsRecording(false);
         SpeechRecognition.stopListening();
 
-
         if (transcript.trim()) {
             const transcribedMessage = transcript.trim();
             setNewMessage(transcribedMessage);
@@ -219,11 +248,7 @@ const Conversation = () => {
         }
     };
 
-
     const handleSendMessage = async (messageText = newMessage) => {
-
-        console.log('newMessage:', newMessage);
-        console.log('messageText:', messageText);
         messageText = String(messageText).trim();
 
         if (!currentConversationId || !messageText) {
@@ -233,7 +258,6 @@ const Conversation = () => {
 
         const token = localStorage.getItem('token');
         setLoading(true);
-
 
         const userMessage = {
             sender: 'user',
@@ -258,11 +282,11 @@ const Conversation = () => {
             if (response.ok) {
                 const aiMessage = {
                     sender: 'Language Teacher',
-                    text: data.text, // Assuming the AI response is returned in the "text" property
-                    translation: data.translation, // AI's response translation
+                    text: data.text,
+                    translation: data.translation,
                 };
                 setConversations([...conversations, userMessage, aiMessage]);
-                setNewMessage(''); // Clear the input field after sending
+                setNewMessage('');
             } else {
                 setMessage('Failed to send message');
             }
@@ -283,7 +307,6 @@ const Conversation = () => {
         audio.play();
     };
 
-
     if (!SpeechRecognition.browserSupportsSpeechRecognition()) {
         return <p>Your browser does not support speech recognition.</p>;
     }
@@ -297,6 +320,17 @@ const Conversation = () => {
                         <p><strong>Username:</strong> {userDetails.username}</p>
                         <p><strong>Language:</strong> {userDetails.language}</p>
                         <p><strong>Proficiency Level:</strong> {userDetails.proficiencyLevel}</p>
+
+                        {/* Change Proficiency Level Dropdown */}
+                        <select
+                            value={userDetails.proficiencyLevel}
+                            onChange={(e) => updateProficiencyLevel(e.target.value)}
+                        >
+                            <option value="" disabled>Select new proficiency level</option>
+                            <option value="Beginner">Beginner</option>
+                            <option value="Intermediate">Intermediate</option>
+                            <option value="Advanced">Advanced</option>
+                        </select>
                     </div>
                     <button onClick={startNewConversation}>Start New Chat</button>
                 </div>
@@ -352,4 +386,5 @@ const Conversation = () => {
 };
 
 export default Conversation;
+
 
