@@ -56,34 +56,42 @@ const QuizPage = () => {
             setHint('');
             setUserAnswer('');
             setTimeout(() => setMessage(''), 1000);
-            if (currentIndex + 1 < flashcards.length) {
-                setCurrentIndex(currentIndex + 1);
-            } else {
-                // Quiz completed
-                markQuizAsCompleted();
-            }
+            advanceToNextCard();
         } else {
             // Incorrect answer
-            if (attempts === 0) {
-                setHint(`Hint: Definition - ${flashcards[currentIndex].definition}`);
-                setAttempts(attempts + 1);
-            } else if (attempts === 1) {
-                const exampleUsage = flashcards[currentIndex].exampleUsage;
-                const exampleWithoutTranslation = exampleUsage.replace(/\s*\(.*?\)\s*/g, '').trim();
-                setHint(`Hint: Example Usage - ${exampleWithoutTranslation}`);
+            setMessage('Incorrect, try again!');
+            if (attempts < 2) {
                 setAttempts(attempts + 1);
             } else {
+                // After 3 incorrect attempts, show the correct answer and proceed
                 setMessage(`The correct translation is: ${flashcards[currentIndex].translation}`);
                 setAttempts(0);
                 setHint('');
                 setUserAnswer('');
-                if (currentIndex + 1 < flashcards.length) {
-                    setCurrentIndex(currentIndex + 1);
-                } else {
-                    // Quiz completed
-                    markQuizAsCompleted();
-                }
+                setTimeout(() => advanceToNextCard(), 2000);
             }
+        }
+    };
+
+    const handleRequestHint = () => {
+        // Provide hints based on attempts
+        if (attempts === 0) {
+            setHint(`Hint: Definition - ${flashcards[currentIndex].definition}`);
+        } else if (attempts === 1) {
+            const exampleUsage = flashcards[currentIndex].exampleUsage;
+            const exampleWithoutTranslation = exampleUsage.replace(/\s*\(.*?\)\s*/g, '').trim();
+            setHint(`Hint: Example Usage - ${exampleWithoutTranslation}`);
+        } else {
+            setHint('No more hints available.');
+        }
+    };
+
+    const advanceToNextCard = () => {
+        if (currentIndex + 1 < flashcards.length) {
+            setCurrentIndex(currentIndex + 1);
+        } else {
+            // Quiz completed
+            markQuizAsCompleted();
         }
     };
 
@@ -129,8 +137,10 @@ const QuizPage = () => {
                 />
                 <button type="submit">Submit</button>
             </form>
+            <button onClick={handleRequestHint}>Request Hint</button>
         </div>
     );
 };
 
 export default QuizPage;
+
