@@ -108,7 +108,6 @@ const FlashcardsPage = ({ token, userId }) => {
 
     const percentage = totalFlashcards > 0 ? (studiedFlashcards / totalFlashcards) * 100 : 0;
 
-    // Determine the progress bar color
     let progressBarColor;
     if (percentage === 100) {
         progressBarColor = 'green';
@@ -120,20 +119,26 @@ const FlashcardsPage = ({ token, userId }) => {
 
     return (
         <div className="flashcards-page">
-            <h2>Your Flashcard Packs</h2>
-            {/* Progress Bar */}
-            <div className="progress-bar-container">
-                <p>Your Progress: {studiedFlashcards}/{totalFlashcards} flashcards studied
-                    ({totalFlashcards > 0 ? Math.round((studiedFlashcards / totalFlashcards) * 100) : 0}%)</p>
+            <h2>Progress Dashboard</h2>
+            <div className="dashboard-header">
+                Track your study sessions and vocabulary progress
+            </div>
 
-                <div className="progress-bar">
-                    <div
-                        className="progress-bar-fill"
-                        style={{
-                            width: `${percentage}%`,
-                            backgroundColor: progressBarColor,
-                        }}
-                    ></div>
+            <div className="progress-section">
+                <p><strong>Number of Chats:</strong> {flashcardPacks.length}</p>
+
+                <div className="progress-bar-container">
+                    <p>Your Progress: {studiedFlashcards}/{totalFlashcards} flashcards studied
+                        ({totalFlashcards > 0 ? Math.round((studiedFlashcards / totalFlashcards) * 100) : 0}%)</p>
+                    <div className="progress-bar">
+                        <div
+                            className="progress-bar-fill"
+                            style={{
+                                width: `${percentage}%`,
+                                backgroundColor: progressBarColor,
+                            }}
+                        ></div>
+                    </div>
                 </div>
             </div>
             {message && <p>{message}</p>}
@@ -143,7 +148,6 @@ const FlashcardsPage = ({ token, userId }) => {
                     flashcardPacks.map((pack) => (
                         <div key={pack.id} className={`pack-item ${pack.completed ? 'completed' : 'incomplete'}`}>
                             <h3>{new Date(pack.createdAt).toLocaleDateString()}</h3>
-                            {/* Display recommended words from flashcards */}
                             <ul>
                                 {pack.flashcards.slice(0, 5).map((card) => (
                                     <li key={card.id}>{card.term}</li>
@@ -159,13 +163,10 @@ const FlashcardsPage = ({ token, userId }) => {
                             }}>
                                 {selectedPackId === pack.id ? 'Hide Flashcards' : 'View Flashcards'}
                             </button>
-                            {/* Conditionally render the "Take the Quiz" button */}
-                            {!pack.completed && (
-                                <Link to={`/quiz/${pack.id}`}>
-                                    <button>Take the Quiz</button>
-                                </Link>
-                            )}
-                            {/* Display flashcards if this pack is selected */}
+                            {/* "Take the Quiz" button displayed for each pack */}
+                            <Link to={`/quiz/${pack.id}`} className="quiz-button">
+                                Take the Quiz
+                            </Link>
                             {selectedPackId === pack.id && (
                                 <div className="flashcards-container">
                                     {flashcards.length > 0 ? (
@@ -188,3 +189,5 @@ const FlashcardsPage = ({ token, userId }) => {
 };
 
 export default FlashcardsPage;
+
+

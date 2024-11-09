@@ -33,3 +33,23 @@
     filter: blur(5px);
     pointer-events: none;
 }
+
+.recommended-words, .feedback-summary {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 8px;
+    background-color: #f4f4f4;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.recommended-words h4, .feedback-summary h4 {
+    margin-top: 0;
+    font-size: 1.2em;
+    color: #333;
+}
+
+.recommended-words p, .feedback-summary p {
+    font-size: 1em;
+    color: #555;
+    line-height: 1.5;
+}

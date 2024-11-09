@@ -9,6 +9,8 @@ const Conversation = () => {
     const [newMessage, setNewMessage] = useState('');
     const [message, setMessage] = useState('');
     const [loading, setLoading] = useState(false);
+    const [recommendedWords, setRecommendedWords] = useState('');
+    const [feedbackSummary, setFeedbackSummary] = useState('');
     const [userDetails, setUserDetails] = useState({
         username: '',
         language: '',
@@ -82,23 +84,38 @@ const Conversation = () => {
         }
 
         try {
-            const response = await fetch(`http://localhost:8080/api/chat/end`, {
+            const endResponse = await fetch(`http://localhost:8080/api/chat/end`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({
-                    conversationId: currentConversationId,
-                }),
+                body: JSON.stringify({ conversationId: currentConversationId }),
             });
 
-            const data = await response.json();
-            if (response.ok) {
-                setMessage('Conversation ended. Recommended words: ' + data.recommendedWords.join(', '));
-                setNewMessage('');
-                setLoading(false);
-                navigate('/flashcards');
+            const endData = await endResponse.json();
+            if (endResponse.ok) {
+                if (endData.recommendedWords) {
+                    setRecommendedWords(endData.recommendedWords.join(', '));
+                } else {
+                    setRecommendedWords('No recommended words available.');
+                }
+
+                const feedbackResponse = await fetch(`http://localhost:8080/api/chat/conversation/${currentConversationId}/feedback`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                });
+
+                const feedbackData = await feedbackResponse.text();
+                console.log('Feedback Data:', feedbackData); // Log the feedback data
+                if (feedbackResponse.ok) {
+                    setFeedbackSummary(feedbackData);
+                } else {
+                    setFeedbackSummary('Failed to fetch feedback summary.');
+                }
             } else {
                 setMessage('Failed to end conversation');
             }
@@ -107,6 +124,7 @@ const Conversation = () => {
             setMessage('Error ending conversation');
         }
     };
+
 
     const fetchUserDetails = async () => {
         const token = localStorage.getItem('token');
@@ -321,7 +339,6 @@ const Conversation = () => {
                         <p><strong>Language:</strong> {userDetails.language}</p>
                         <p><strong>Proficiency Level:</strong> {userDetails.proficiencyLevel}</p>
 
-                        {/* Change Proficiency Level Dropdown */}
                         <select
                             value={userDetails.proficiencyLevel}
                             onChange={(e) => updateProficiencyLevel(e.target.value)}
@@ -337,7 +354,6 @@ const Conversation = () => {
             ) : (
                 <p>Please log in to start a conversation</p>
             )}
-            {message && <p>{message}</p>}
 
             {currentConversationId && (
                 <div>
@@ -379,10 +395,27 @@ const Conversation = () => {
                     <button onClick={handleEndConversation} disabled={loading}>
                         End Conversation
                     </button>
+
+                    {/* Recommended Words Section */}
+                    {recommendedWords && (
+                        <div className="recommended-words">
+                            <h4>Recommended Words</h4>
+                            <p>{recommendedWords}</p>
+                        </div>
+                    )}
+
+                    {/* Feedback Summary Section */}
+                    {feedbackSummary && (
+                        <div className="feedback-summary">
+                            <h4>Feedback Summary</h4>
+                            <p>{feedbackSummary}</p>
+                        </div>
+                    )}
                 </div>
             )}
         </div>
     );
+
 };
 
 export default Conversation;
