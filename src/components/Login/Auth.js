@@ -45,20 +45,18 @@ const Auth = () => {
         if (response.status === 200) {
             setMessage(data.message);
             setToken(data.token);
-            localStorage.setItem('token', data.token); // Save the token in localStorage
+            localStorage.setItem('token', data.token); // Save token in local Storage
         } else {
             setMessage(data.message);
         }
     };
 
-    // Handles user logout (clear token)
     const logout = () => {
         setMessage('User logged out successfully');
         setToken('');
         localStorage.removeItem('token');
     };
 
-    // Fetch all users and set the state
     const showAllUsers = async () => {
         const token = localStorage.getItem('token'); // Get the JWT token from localStorage
         const response = await fetch('http://localhost:8080/users', {
@@ -71,7 +69,7 @@ const Auth = () => {
 
         const data = await response.json();
         if (response.status === 200) {
-            setUsers(data); // Store the users in the state
+            setUsers(data);
         } else {
             setMessage('Failed to fetch users');
         }

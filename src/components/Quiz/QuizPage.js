@@ -90,7 +90,6 @@ const QuizPage = () => {
         if (currentIndex + 1 < flashcards.length) {
             setCurrentIndex(currentIndex + 1);
         } else {
-            // Quiz completed
             markQuizAsCompleted();
         }
     };

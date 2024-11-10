@@ -23,8 +23,8 @@ const Login = ({ onLogin }) => {
         if (response.status === 200) {
             setMessage(data.message);
             localStorage.setItem('token', data.token);
-            localStorage.setItem('userId', data.userId); // Store the userId
-            onLogin(data.token); // Update token state in App.js
+            localStorage.setItem('userId', data.userId);
+            onLogin(data.token);
             navigate('/flashcards');
         } else {
             setMessage(data.message);

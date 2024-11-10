@@ -6,8 +6,8 @@ const Logout = ({ onLogout }) => {
 
     useEffect(() => {
         localStorage.removeItem('token');
-        localStorage.removeItem('userId'); // Remove userId
-        onLogout(); // Update token state in App.js
+        localStorage.removeItem('userId');
+        onLogout();
         navigate('/login');
     }, [onLogout, navigate]);
 
